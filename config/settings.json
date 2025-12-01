@@ -1,0 +1,16 @@
+{
+  "threshold": 0.36,
+  "consecutive_hits": 2,
+  "binary_threshold": 40,
+  "blur_kernel": 30,
+  "overlay_color": "#8000ff",
+  "overlay_alpha": 0.5,
+  "delay_monitor_enabled": false,
+  "delay_threshold_seconds": 300,
+  "alarm_enabled": true,
+  "slack_webhook_url": "",
+  "slack_bot_token": "",
+  "slack_channel": "",
+  "mask_inclusive": false,
+  "gpio_pin": 17
+}
