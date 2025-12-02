@@ -33,5 +33,5 @@ services:
     volumes:
       - ./ftp_data:/ftp_data
     ports:
-      - "21:21"
-      - "21000-21010:21000-21010"
+      - "${FTP_PORT:-21}:21"
+      - "${FTP_PASSIVE_PORTS:-21000-21010}:21000-21010"

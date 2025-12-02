@@ -5,6 +5,8 @@
 - [x] 環境変数・秘密情報の整理（Slack Webhook URL / Bot Token、GPIO設定を `.env.local` などで管理）。
 - [x] クローン直後に `docker compose up --build` だけでフロントビルドまで完了する構成に簡素化。
 - [x] 複数ユーザー同一ホストでもプロジェクト名を自動分離する起動スクリプト追加。
+- [x] FTP公開ポートを環境変数で切り替え可能にしてポート衝突を回避。
+- [x] `compose-up.sh` でポート衝突時は環境変数で切替できることを明記し、デフォルトは21/21000-21010固定に整理。
 
 ## Phase 2: ストレージとリテンション
 - [x] `/ftp_data/incoming` 監視と `/storage/archive/YYYY/MM/DD/` への日付振り分け実装（watchdog + 10秒ポーリング）。
