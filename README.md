@@ -45,6 +45,7 @@
 - 立ち上げ: `docker compose up --build`（フロントエンドをコンテナ内でビルド）
 - ボリューム: `./config` `/storage` `/logs` `/ftp_data` をマウント。必要に応じて権限を調整。`/storage` はNginxにもマウントし `/storage/...` で画像/オーバーレイを配信。
 - FTP デフォルトユーザー: `ftpuser` / `ftpuser`（ `docker-compose.yml` で変更可）。
+- 複数ユーザーが同一ホストでクローンする場合は `./scripts/compose-up.sh` を利用すると、ユーザー名を含んだプロジェクト名で起動し他ユーザーのコンテナ・ボリュームと分離できる。
 
 ## 開発・起動
  - フロント/開発サーバー: `npm run dev`（`frontend/` ディレクトリ）
