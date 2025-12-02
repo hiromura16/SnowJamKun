@@ -6,9 +6,8 @@
 - GPIOは物理ピン11（GPIO17）をデフォルトで使用（設定で変更可）。未設定なら無効。
 
 ## セットアップ
-1. 依存インストール  
-   `npm install`
-2. 設定ファイルの用意 (`config/settings.json`)  
+### Docker Composeでの起動（推奨）
+1. 設定ファイルの確認 (`config/settings.json`)  
    例:
    ```json
    {
@@ -25,20 +24,31 @@
      "gpio_pin": 17
    }
    ```
-3. マスクファイルの初期化 (`config/mask.json`)  
+2. マスクファイルの初期化 (`config/mask.json`)  
    フロント設定画面からモノクロのPNG/JPEGマスクをアップロードする。白=適用、黒=非適用（除外モードでは反転）。
+3. Docker Compose起動  
+   `docker compose up --build`  
+   （フロントエンドのnpm install/ビルドはコンテナ内で自動実行される）
 4. ログ/保存用ディレクトリの作成（必要に応じて）  
    `/ftp_data/incoming`, `/storage/archive`, `/logs` を作成し、書き込み権限を確認。
 
+### ローカル開発（フロントエンドのみ）
+1. 依存インストール  
+   `cd frontend && npm install`
+2. 開発サーバー  
+   `npm run dev`
+3. ビルド  
+   `npm run build`
+
 ## Docker Compose（フェーズ1基盤）
-- 主要サービス: backend(FastAPI), frontend(静的プレースホルダ), nginx(リバースプロキシ), ftp(画像受信)。
-- 立ち上げ: `docker compose up --build`
+- 主要サービス: backend(FastAPI), nginx(フロント静的配信+リバースプロキシ), ftp(画像受信)。
+- 立ち上げ: `docker compose up --build`（フロントエンドをコンテナ内でビルド）
 - ボリューム: `./config` `/storage` `/logs` `/ftp_data` をマウント。必要に応じて権限を調整。`/storage` はNginxにもマウントし `/storage/...` で画像/オーバーレイを配信。
 - FTP デフォルトユーザー: `ftpuser` / `ftpuser`（ `docker-compose.yml` で変更可）。
 
 ## 開発・起動
-- フロント/開発サーバー: `npm run dev`
-- ビルド: `npm run build`
+ - フロント/開発サーバー: `npm run dev`（`frontend/` ディレクトリ）
+ - ビルド: `npm run build`
 - テスト: `npm test`（対話式は `npm run test:watch` があれば利用）
 - Docker Compose を使う場合は `docker compose up`（構成は `docs/roadmap.md` を参照して追加）
 

@@ -3,6 +3,7 @@
 ## Phase 1: 基盤・環境
 - [x] Docker Compose (Nginx / Frontend / FastAPI / FTP) 構築とボリューム設定(`/ftp_data`, `/storage`, `/config`)。
 - [x] 環境変数・秘密情報の整理（Slack Webhook URL / Bot Token、GPIO設定を `.env.local` などで管理）。
+- [x] クローン直後に `docker compose up --build` だけでフロントビルドまで完了する構成に簡素化。
 
 ## Phase 2: ストレージとリテンション
 - [x] `/ftp_data/incoming` 監視と `/storage/archive/YYYY/MM/DD/` への日付振り分け実装（watchdog + 10秒ポーリング）。

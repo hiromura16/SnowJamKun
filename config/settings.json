@@ -5,7 +5,7 @@
   "blur_kernel": 30,
   "overlay_color": "#8000ff",
   "overlay_alpha": 0.5,
-  "delay_monitor_enabled": false,
+  "delay_monitor_enabled": true,
   "delay_threshold_seconds": 300,
   "alarm_enabled": true,
   "slack_webhook_url": "",
