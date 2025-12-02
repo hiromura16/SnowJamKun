@@ -20,6 +20,14 @@
   background: var(--bg);
 }
 
+/* Make form controls inherit the global font to keep header buttons aligned */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
 [data-theme='light'] {
   --bg: #f8fafc;
   --card: #ffffff;
