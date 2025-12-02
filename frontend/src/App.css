@@ -119,6 +119,9 @@ textarea {
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--border);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
 }
 .header-actions a.active {
   background: var(--card);
