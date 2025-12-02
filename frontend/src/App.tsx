@@ -149,6 +149,7 @@ function App() {
   const [toggleBusy, setToggleBusy] = useState(false)
   const [modalImage, setModalImage] = useState<{ base: string; overlay?: string; title: string } | null>(null)
   const [configDirty, setConfigDirty] = useState(false)
+  const [alarmAcknowledged, setAlarmAcknowledged] = useState(false)
 
   const fetchAll = async (silent = false, forceConfig = false) => {
     if (!silent) setLoading(true)
@@ -172,6 +173,12 @@ function App() {
         if (forceConfig) setConfigDirty(false)
       }
       setMaskImageUrl(maskImg.url ? `${maskImg.url}?v=${Date.now()}` : null)
+      // Alarm ON かつ Alarm状態のときだけバナーを再表示する
+      if (cfg.settings.alarm_enabled && dashRaw.alarm_state === 'Alarm') {
+        setAlarmAcknowledged(false)
+      } else {
+        setAlarmAcknowledged(true)
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'unknown error')
     } finally {
@@ -246,10 +253,11 @@ function App() {
 
   const statusColor = useMemo(() => {
     if (!dashboard) return 'badge neutral'
-    if (dashboard.alarm_state === 'Alarm') return 'badge danger'
+    const alarmActive = dashboard.alarm_state === 'Alarm' && (config?.alarm_enabled ?? true)
+    if (alarmActive) return 'badge danger'
     if (dashboard.delay_warning || dashboard.alarm_state === 'Warning') return 'badge warning'
     return 'badge success'
-  }, [dashboard])
+  }, [dashboard, config])
 
   const toggleAlarm = async () => {
     if (!config || toggleBusy) return
@@ -295,6 +303,8 @@ function App() {
 
   const resetAlarm = async () => {
     await onControl({ reset_alarm: true }, '警報リセット')
+    setAlarmAcknowledged(true)
+    setDashboard((prev) => (prev ? { ...prev, alarm_state: 'Normal' } : prev))
   }
 
   const setNumberField = (key: keyof ConfigResponse['settings'], value: string) => {
@@ -478,6 +488,24 @@ function App() {
           </button>
         </div>
       </header>
+
+      {dashboard?.alarm_state === 'Alarm' && config?.alarm_enabled && !alarmAcknowledged ? (
+        <div className="alarm-banner">
+          <div className="alarm-banner__meta">
+            <div className="label">警報発生中</div>
+            <div className="alarm-banner__title">ALARM</div>
+            <div className="alarm-banner__sub">
+              検知値 {(dashboard.detection_rate * 100).toFixed(2)}% / しきい値 {(dashboard.threshold * 100).toFixed(2)}%
+            </div>
+          </div>
+          <div className="alarm-banner__actions">
+            <span className="alarm-dot" aria-hidden />
+            <button className="alarm-reset" onClick={resetAlarm}>
+              警報リセット
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {error ? <div className="banner error">Error: {error}</div> : null}
       {actionMessage ? <div className="banner info">{actionMessage}</div> : null}

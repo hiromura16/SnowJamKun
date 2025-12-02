@@ -96,7 +96,7 @@ async def dashboard() -> DashboardResponse:
         if result:
             detection_rate = result.detection_rate
             overlay_path = result.overlay_path
-            alarm_state = "Alarm" if result.alarm else "Normal"
+            alarm_state = "Alarm" if settings.alarm_enabled and result.alarm else "Normal"
             if settings.alarm_enabled and result.alarm and settings.gpio_pin:
                 gpio_high(settings.gpio_pin)
             if settings.alarm_enabled and result.alarm:
