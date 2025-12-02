@@ -15,7 +15,9 @@ fi
 
 USER_NAME="$(id -un 2>/dev/null || echo user)"
 PROJECT_SUFFIX="${PROJECT_SUFFIX:-${USER_NAME}-$(basename "$ROOT_DIR")}"
-PROJECT_NAME="${COMPOSE_PROJECT_NAME:-snowjamkun-${PROJECT_SUFFIX}}"
+RAW_NAME="${COMPOSE_PROJECT_NAME:-snowjamkun-${PROJECT_SUFFIX}}"
+# docker compose のプロジェクト名は英小文字/数字/ハイフン/アンダーバーのみ許可。
+PROJECT_NAME="$(echo "${RAW_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_-]/-/g')"
 
 echo "Using project name: ${PROJECT_NAME}" 1>&2
 
