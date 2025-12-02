@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import shutil
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
@@ -39,12 +40,18 @@ class IncomingProcessor:
 
         return target
 
+    def process_if_stable(self, path: Path) -> Path | None:
+        """Move file only if size is stable to avoid partial uploads."""
+        if not self._is_stable(path):
+            return None
+        return self.process_file(path)
+
     def process_pending(self) -> List[Path]:
         moved: List[Path] = []
         if not self.incoming_root.exists():
             return moved
         for candidate in self._list_files(self.incoming_root):
-            moved_path = self.process_file(candidate)
+            moved_path = self.process_if_stable(candidate)
             if moved_path:
                 moved.append(moved_path)
         return moved
@@ -52,6 +59,22 @@ class IncomingProcessor:
     @staticmethod
     def _list_files(root: Path) -> Iterable[Path]:
         return (p for p in root.iterdir() if p.is_file())
+
+    def _is_stable(self, path: Path, *, checks: int = 2, interval: float = 1.0) -> bool:
+        """Check if file size is stable to avoid moving partially uploaded files."""
+        try:
+            size = path.stat().st_size
+        except OSError:
+            return False
+        for _ in range(checks - 1):
+            time.sleep(interval)
+            try:
+                new_size = path.stat().st_size
+            except OSError:
+                return False
+            if new_size != size:
+                return False
+        return True
 
 
 class IncomingEventHandler(FileSystemEventHandler):
@@ -61,12 +84,12 @@ class IncomingEventHandler(FileSystemEventHandler):
     def on_created(self, event: FileSystemEvent) -> None:
         if event.is_directory:
             return
-        self.processor.process_file(Path(event.src_path))
+        self.processor.process_if_stable(Path(event.src_path))
 
     def on_moved(self, event: FileSystemEvent) -> None:
         if event.is_directory:
             return
-        self.processor.process_file(Path(event.dest_path))
+        self.processor.process_if_stable(Path(event.dest_path))
 
 
 def start_observer(processor: IncomingProcessor) -> Observer:
