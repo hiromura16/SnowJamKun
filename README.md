@@ -45,8 +45,8 @@
 - 立ち上げ: `docker compose up --build`（フロントエンドをコンテナ内でビルド）
 - ボリューム: `./config` `/storage` `/logs` `/ftp_data` をマウント。必要に応じて権限を調整。`/storage` はNginxにもマウントし `/storage/...` で画像/オーバーレイを配信。
 - FTP デフォルトユーザー: `ftpuser` / `ftpuser`（ `docker-compose.yml` で変更可）。
-- 複数ユーザーが同一ホストでクローンする場合は `./scripts/compose-up.sh` を利用すると、ユーザー名を含んだプロジェクト名で起動し他ユーザーのコンテナ・ボリュームと分離できる。FTPのデフォルトポートは21/21000-21010。ポートが埋まっている場合のみ `export FTP_PORT=2121` や `export FTP_PASSIVE_PORTS=22000-22010` を設定してから起動する。
-- FTPの保存先は各クローン直下の `./ftp_data/incoming`（コンテナ内 `/ftp_data/incoming` にマウント）。別ユーザーと同居する場合は、既存のFTPコンテナを停止してから `docker compose up` するか、上記のポート変更で衝突を避ける。
+- FTPポートはカメラ接続の都合で21固定（パッシブ21000-21010）。同居環境では他のFTPサービスを停止してから起動すること。
+- FTPの保存先はリポジトリ直下の `./ftp_data/incoming`（コンテナ内 `/ftp_data/incoming` にマウント）。
 - 事前に `config/settings.json` を確認・編集し、ローカルの運用に合わせた閾値や通知先を設定してから `docker compose up` を実行する。
 
 ## 開発・起動
